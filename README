@@ -5,5 +5,12 @@ mports
 
 ---
 Purpose
--- I will make no attempt to follow the guidelines of CONTRIBUTING.md
+-- I will make no attempt to follow guidelines of any sort
+--- 
+
+---
+Usage
+-- follow github.com/chimera-linux/cports/tree/master#using-cports-with-chimera
+---- then copy any packages to cports/contrib
+---- then pkg using cbuild
 ---
