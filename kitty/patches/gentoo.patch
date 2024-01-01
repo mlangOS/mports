@@ -1,0 +1,60 @@
+this is a mix of changes from 
+https://gitweb.gentoo.org/repo/gentoo.git/tree/x11-terms/kitty/kitty-0.31.0.ebuild
+and
+https://git.alpinelinux.org/aports/tree/community/kitty/disable-docs.patch
+the later is an actual patch while the former is mostly sed changeds, converted to a patch with git
+index 955cd596a..000000000
+diff --git a/setup.py b/setup.py
+index 6c2849045..43e807fa8 100755
+--- a/setup.py
++++ b/setup.py
+@@ -432,7 +432,7 @@ def init_env(
+         df += ' -Og'
+         float_conversion = '-Wfloat-conversion'
+     fortify_source = '' if sanitize and is_macos else '-D_FORTIFY_SOURCE=2'
+-    optimize = df if debug or sanitize else '-O3'
++    optimize = df if debug or sanitize else ''
+     sanitize_args = get_sanitize_args(cc, ccver) if sanitize else set()
+     cppflags_ = os.environ.get(
+         'OVERRIDE_CPPFLAGS', '-D{}DEBUG'.format('' if debug else 'N'),
+@@ -459,7 +459,7 @@ def init_env(
+     )
+     ldflags_ = os.environ.get(
+         'OVERRIDE_LDFLAGS',
+-        '-Wall ' + ' '.join(sanitize_args) + ('' if debug else ' -O3')
++        '-Wall ' + ' '.join(sanitize_args) + ('' if debug else ' ')
+     )
+     ldflags = shlex.split(ldflags_)
+     ldflags.append('-shared')
+@@ -979,8 +979,8 @@ def build_static_kittens(
+     if for_platform:
+         binary_data_flags.append("-X kitty.IsStandaloneBuild=true")
+     if not args.debug:
+-        ld_flags.append('-s')
+-        ld_flags.append('-w')
++        pass
++        pass
+     cmd += ['-ldflags', ' '.join(binary_data_flags + ld_flags)]
+     dest = os.path.join(destination_dir or launcher_dir, 'kitten')
+     if for_platform:
+@@ -1046,7 +1046,7 @@ def build_launcher(args: Options, launcher_dir: str = '.', bundle_type: str = 's
+         if args.profile:
+             libs.append('-lprofiler')
+     else:
+-        cflags.append('-g3' if args.debug else '-O3')
++        pass
+     if bundle_type.endswith('-freeze'):
+         cppflags.append('-DFOR_BUNDLE')
+         cppflags.append(f'-DPYVER="{sysconfig.get_python_version()}"')
+@@ -1151,11 +1151,6 @@ def compile_python(base_path: str) -> None:
+ 
+ 
+ def create_linux_bundle_gunk(ddir: str, libdir_name: str) -> None:
+-    if not os.path.exists('docs/_build/html'):
+-        make = 'gmake' if is_freebsd else 'make'
+-        run_tool([make, 'docs'])
+-    copy_man_pages(ddir)
+-    copy_html_docs(ddir)
+     for (icdir, ext) in {'256x256': 'png', 'scalable': 'svg'}.items():
+         icdir = os.path.join(ddir, 'share', 'icons', 'hicolor', icdir, 'apps')
+         safe_makedirs(icdir)
